@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TodoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Auth;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/verify-token', [AuthController::class, 'verifyToken']);
 
 Route::apiResource('todos', TodoController::class)->middleware('auth:sanctum');
 

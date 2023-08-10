@@ -27,9 +27,14 @@ class TodoController extends Controller
         $data = Todo::create($req);
         return response()->json(['status' => true, 'data' => $data], 201);
     }
-
+    
     public function update(Request $request, $id): JsonResponse
     {
+        $data = Todo::find($id);
+        if (!$data) {
+            return response()->json(['status' => false, 'message' => 'Todo not found'], 404);
+        }
+
         $validateUser = Validator::make(
             $request->all(),
             [
@@ -40,14 +45,14 @@ class TodoController extends Controller
         if ($validateUser->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => 'validation error',
+                'message' => 'Validation error',
                 'errors' => $validateUser->errors()
             ], 401);
         }
 
-        $data = Todo::find($id);
         $data->has_completed = $request->has_completed;
-        $data->update();
+        $data->save();
+
         return response()->json(['status' => true, 'data' => $data], 202);
     }
 

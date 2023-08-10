@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('user_id');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->boolean('has_completed')->nullable();
+            $table->boolean('has_completed')->false;
             $table->timestamps();
         });
     }

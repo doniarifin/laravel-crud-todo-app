@@ -4,8 +4,15 @@ import { createApp } from 'vue'
 import App from '/resources/App.vue'
 import router from './routes.js';
 import store from './store.js';
+import axios from 'axios';
+import ToastPlugin from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
+
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const app = createApp(App); 
 app.use(router);
 app.use(store);
+app.use(ToastPlugin);
 app.mount('#app');

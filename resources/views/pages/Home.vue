@@ -33,20 +33,32 @@ const user = ref('');
 const isLoading = ref();
 
 let router = useRouter();
+const token = localStorage.getItem('APP_DEMO_USER_TOKEN');
+const headers = { Authorization: `Bearer ${token}` };
 
 const authentication = async () => {
     isLoading.value = true
     try {
-        const req = await axios.get('/api/user');
+        // const token = axios.get('/sanctum/csrf-cookie');
+        // console.log(token.config.Authorization);
+        const req = await axios.get('/api/user', {
+            headers
+        });
         user.value = req.data;
+        isLoading.value = false
     } catch (e) {
+        console.log(e);
         await router.push('/')
     }
 }
 
 const handleTodos = async () => {
     try {
-        const req = await axios.get('/api/todos')
+        const token = axios.get('/sanctum/csrf-cookie');
+        console.log(await token);
+        const req = await axios.get('/api/todos', {
+            headers
+        })
         todos.value = req.data
         console.log(req.data.data);
     } catch (e) {

@@ -58,7 +58,7 @@ const handleLogin = async () => {
         const result = await axios.post('/api/auth/register', form)
         if (result.status === 200 && F && result.data.token) {
             localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token)
-            await router.push('Home')
+            await router.push('/home')
         }
     } catch (e) {
         if (e && e.response.data && e.response.data.errors) {

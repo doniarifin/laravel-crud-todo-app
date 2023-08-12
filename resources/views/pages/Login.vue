@@ -5,7 +5,7 @@
             <ul class="list-disc text-red-400" v-if="Array.isArray(errors)">
                 <li v-for="(value, index) in errors" :key="index">{{ value }}</li>
             </ul>
-            <p class="list-disc text-red-400" v-if="typeof errors === 'string'">{{ errors }}</p>
+                        <p class="list-disc text-red-400" v-if="typeof errors === 'string'">{{ errors }}</p>
             <form method="post" @submit.prevent="handleLogin">
                 <div class="mb-4">
                     <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
@@ -38,6 +38,9 @@
 import { ref, reactive, computed, watch, inject } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from 'axios';
+import { useToast } from "vue-toast-notification";
+
+const toast = useToast();
 
 const errors = ref(null);
 
@@ -46,19 +49,38 @@ const form = reactive({
     email: '',
     password: '',
 });
-const handleLogin = async () => {
-    try {
-        const result = await axios.post('/api/auth/login', form)
-        if (result.status === 200 && result.data && result.data.token) {
-            localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token);
-            await router.push('/home');
-        }
-    } catch (e) {
-        if (e && e.response.data && e.response.data.errors) {
-            errors.value = Object.values(e.response.data.errors)
-        } else {
-            errors.value = e.response.data.message || ""
-        }
-    }
+// const handleLogin = async () => {
+//     try {
+//         axios.get('/sanctum/csrf-cookie').then((r) => {
+//             const result = axios.post('/api/auth/login', form)
+//             if (result) {
+//                 console.log(notif);
+//                 localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token);
+//                 router.push('/home');
+//             }
+//         });
+//     } catch (e) {
+
+//     }
+// }
+function handleLogin() {
+    axios.get('/sanctum/csrf-cookie').then((r) => {
+        console.log(r);
+        axios
+            .post('/api/auth/login', form)
+            .then(
+                (res) => {
+                    toast.success('login success',{
+                        position: 'top'
+                    })
+                    localStorage.setItem('APP_DEMO_USER_TOKEN', res.data.token);
+                    router.push("/home");
+                },
+                (e) => {
+                    util.showError(e);
+                    cbFalse();
+                }
+            )
+    })
 }
 </script>

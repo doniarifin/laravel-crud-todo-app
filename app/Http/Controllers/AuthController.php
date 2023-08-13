@@ -71,7 +71,11 @@ class AuthController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Logged In Successfully',
-                'token' => $user->createToken("API_TOKEN")->plainTextToken
+                'token' => $user->createToken("API_TOKEN")->plainTextToken,
+                'myUser' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ]
             ], 200);
 
         } catch (\Throwable $e) {
@@ -84,9 +88,7 @@ class AuthController extends Controller
     public function verifyToken(Request $request)
     {
         try {
-            // Verifikasi token menggunakan metode dari Auth
             $user = Auth::user();
-
             if ($user) {
                 return response()->json(['valid' => true], 200);
             } else {

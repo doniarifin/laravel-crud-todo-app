@@ -5,7 +5,7 @@
             <ul class="list-disc text-red-400" v-if="Array.isArray(errors)">
                 <li v-for="(value, index) in errors" :key="index">{{ value }}</li>
             </ul>
-                        <p class="list-disc text-red-400" v-if="typeof errors === 'string'">{{ errors }}</p>
+            <p class="list-disc text-red-400" v-if="typeof errors === 'string'">{{ errors }}</p>
             <form method="post" @submit.prevent="handleLogin">
                 <div class="mb-4">
                     <label class="block text-grey-darker text-sm font-bold mb-2" for="username">
@@ -39,46 +39,48 @@ import { ref, reactive, computed, watch, inject } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from 'axios';
 import { useToast } from "vue-toast-notification";
+import { useStore } from 'vuex';
 
 const toast = useToast();
-
 const errors = ref(null);
+const store = useStore();
 
 const router = useRouter();
 const form = reactive({
     email: '',
     password: '',
 });
-// const handleLogin = async () => {
-//     try {
-//         axios.get('/sanctum/csrf-cookie').then((r) => {
-//             const result = axios.post('/api/auth/login', form)
-//             if (result) {
-//                 console.log(notif);
-//                 localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token);
-//                 router.push('/home');
-//             }
-//         });
-//     } catch (e) {
 
-//     }
-// }
 function handleLogin() {
     axios.get('/sanctum/csrf-cookie').then((r) => {
-        console.log(r);
         axios
-            .post('/api/auth/login', form)
+            .post('/api/auth/login', {
+                email: form.email,
+                password: form.password,
+            })
             .then(
                 (res) => {
-                    toast.success('login success',{
-                        position: 'top'
-                    })
+                    if (res.data.message) {
+                        toast.success(res.data.message, {
+                            position: 'top'
+                        })
+                    }
                     localStorage.setItem('APP_DEMO_USER_TOKEN', res.data.token);
+                    store.dispatch('setToken', res.data.token);
+                    store.dispatch('setUser', res.data.myUser);
                     router.push("/home");
                 },
                 (e) => {
-                    util.showError(e);
-                    cbFalse();
+                    const error = e.response.data.message;
+                    if (error) {
+                        toast.error(error, {
+                            position: 'top'
+                        })
+                    } else {
+                        toast.error(e, {
+                            position: 'top'
+                        });
+                    }
                 }
             )
     })

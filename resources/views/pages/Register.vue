@@ -46,26 +46,66 @@
 import { ref, reactive, computed, watch, inject } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from 'axios';
+import { useToast } from "vue-toast-notification";
+import { useStore } from 'vuex';
 
 const errors = ref();
+const store = useStore();
+const toast = useToast();
 const router = useRouter();
 const form = reactive({
+    name: '',
     email: '',
     password: '',
 });
-const handleLogin = async () => {
-    try {
-        const result = await axios.post('/api/auth/register', form)
-        if (result.status === 200 && F && result.data.token) {
-            localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token)
-            await router.push('/home')
-        }
-    } catch (e) {
-        if (e && e.response.data && e.response.data.errors) {
-            errors.value = Object.values(e.response.data.errors)
-        } else {
-            errors.value = e.response.data.message || ""
-        }
-    }
+// const handleLogin = async () => {
+//     try {
+//         const result = await axios.post('/api/auth/register', form)
+//         if (result.status === 200 && F && result.data.token) {
+//             localStorage.setItem('APP_DEMO_USER_TOKEN', result.data.token)
+//             await router.push('/home')
+//         }
+//     } catch (e) {
+//         if (e && e.response.data && e.response.data.errors) {
+//             errors.value = Object.values(e.response.data.errors)
+//         } else {
+//             errors.value = e.response.data.message || ""
+//         }
+//     }
+// }
+function handleLogin() {
+    axios.get('/sanctum/csrf-cookie').then((r) => {
+        axios
+            .post('/api/auth/register', {
+                name: form.name,
+                email: form.email,
+                password: form.password,
+            })
+            .then(
+                (res) => {
+                    if (res.data.message) {
+                        toast.success(res.data.message, {
+                            position: 'top'
+                        })
+                    }
+                    localStorage.setItem('APP_DEMO_USER_TOKEN', res.data.token);
+                    store.dispatch('setToken', res.data.token);
+                    store.dispatch('setUser', res.data.myUser);
+                    router.push("/home");
+                },
+                (e) => {
+                    const error = e.response.data.message;
+                    if (error) {
+                        toast.error(error, {
+                            position: 'top'
+                        })
+                    } else {
+                        toast.error(e, {
+                            position: 'top'
+                        });
+                    }
+                }
+            )
+    })
 }
 </script>

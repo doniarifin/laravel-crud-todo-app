@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import NotFound from '/resources/views/pages/NotFound.vue';
 import { useStore } from 'vuex';
+import { useToast } from "vue-toast-notification";
+import { nextTick } from 'vue';
+const toast = useToast();
 
 const router = createRouter({
     history: createWebHistory(),
@@ -37,7 +40,18 @@ router.beforeEach((to, from, next) => {
     const reqAuth = to.matched.some((record) => record.meta.requiresAuth);
     const loginQuery = { path: "/login" };
     if (reqAuth && (authUser == "" || authUser == null)) {
-        next(loginQuery);
+        axios.get('/api/user')
+            .then((r) => {
+                next();
+            },
+            (e) => {
+                toast.error(e.response.data.message, {
+                    position: 'top'
+                });
+                nextTick(()=>{
+                    next(loginQuery);
+                })
+            });
     } else {
         next();
     }

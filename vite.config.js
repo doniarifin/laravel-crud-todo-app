@@ -5,6 +5,14 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+    build: {
+        rollupOptions: {
+          input: {
+            main: 'index.html',
+            app: 'resource/css/app.css' // Periksa kembali path ini
+          }
+        }
+      },
     plugins: [
         vue(),
         laravel({

@@ -5,18 +5,14 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-    root: './',
-      build: {
+    build: {
         outDir: 'public/dist',
         rollupOptions: {
-          input: 'resource/css/app.css', // Path ke file CSS utama Anda
-          output: {
-            // Tentukan output bundle
-            entryFileNames: 'bundle.js',
-            assetFileNames: 'assets/[name].[ext]'
+          input: {
+            main: 'resource/css/app.css'
           }
         }
-      },
+    },
     plugins: [
         vue(),
         laravel({

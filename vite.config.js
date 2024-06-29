@@ -8,8 +8,8 @@ export default defineConfig({
     build: {
         rollupOptions: {
           input: {
-            main: 'index.html',
-            app: 'resource/css/app.css' // Periksa kembali path ini
+            input: 'index.html',
+            app: 'resource/css/app.css' 
           }
         }
       },

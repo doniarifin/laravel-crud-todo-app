@@ -1,15 +1,19 @@
 {
   "builds": [
     {
+      "src": "public/index.php",
+      "use": "@vercel/php"
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": { "distDir": "public/dist" }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/public/index.php"
     }
   ]
 }

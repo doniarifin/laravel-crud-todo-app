@@ -20,7 +20,7 @@ class TodoController extends Controller
     {
         $data = Todo::where('user_id', $request->user()->id)->where('title', $request->title);
         if ($data->first()) {
-            return response()->json(['status' => false, 'message' => 'Already exist']);
+            return response()->json(['status' => false, 'message' => 'already exist']);
         }
         $req = $request->all();
         $req['user_id'] = $request->user()->id;

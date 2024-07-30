@@ -48,8 +48,12 @@ async function handleNewTodo(title) {
         if (req.data.status) {
             isLoading.value = false
             toast.success('new todo added successfully', {
-            position: 'top'
-        });
+                position: 'top'
+            });
+        } else {
+            toast.error(title + " " + req.data.message, {
+                position: 'top'
+            });
         }
         return req.data.data;
     } catch (e) {
@@ -67,11 +71,16 @@ function handleLogout() {
 
 async function addTodo() {
     if (data.todoTitle === "") {
-        return alert("Todo cannot be empty");
+        toast.error("Todo cannot be empty", {
+            position: 'top'
+        });
+        return
     } else {
         isLoading.value = true
         const dataTodos = await handleNewTodo(data.todoTitle);
-        data.todos.push(dataTodos);
+        if (dataTodos !== undefined) {
+            data.todos.push(dataTodos);
+        }
         data.todoTitle = ""
         isLoading.value = false
     }

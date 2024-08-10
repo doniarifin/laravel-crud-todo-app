@@ -20,8 +20,8 @@
 5. Create a database with the name specified in the DB_DATABASE field of your .env file.
 
 6. Execute the following commands:
-  ```
-  php artisan key:generate
-  php artisan migrate
-  php artisan serve
-  ```
+    ```
+    php artisan key:generate
+    php artisan migrate
+    php artisan serve
+    ```
